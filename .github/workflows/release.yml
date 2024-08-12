@@ -44,7 +44,6 @@ jobs:
 
       - name: upload
         id: fabric_release
-        if: contains(steps.properties.outputs.enabledPlatforms, 'fabric')
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: ${{ vars.MODRINTH_ID }}
