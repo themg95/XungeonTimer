@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "xungeontimer",
+  "version": "${version}",
+  "name": "XungeonTimer",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/xungeontimer/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.mg95.xungeontimer.XungeonTimerClient"
+    ],
+    "main": [
+      "dev.mg95.xungeontimer.XungeonTimer"
+    ]
+  },
+  "mixins": [
+    "xungeontimer.mixins.json",
+    {
+      "config": "xungeontimer.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
