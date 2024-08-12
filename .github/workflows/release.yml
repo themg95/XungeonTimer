@@ -50,6 +50,8 @@ jobs:
           modrinth-id: ${{ vars.MODRINTH_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
           files: build/libs/!(*-@(dev|sources|dev-shadow)).jar
           name: "Xungeon Timer ${{ steps.properties.outputs.mod_version }}"
           version: ${{ steps.properties.outputs.mod_version }}
