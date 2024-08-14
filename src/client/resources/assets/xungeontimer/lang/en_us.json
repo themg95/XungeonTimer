@@ -1,0 +1,14 @@
+{
+  "text.config.xungeontimer.title": "Xungeon Timer",
+
+  "text.config.xungeontimer.option.position": "Position",
+  "text.config.xungeontimer.enum.position.topleft": "Top Left",
+  "text.config.xungeontimer.enum.position.topright": "Top Right",
+  "text.config.xungeontimer.enum.position.bottomleft": "Bottom Left",
+  "text.config.xungeontimer.enum.position.bottomright": "Bottom Right",
+
+  "text.config.xungeontimer.option.resetOnDeath": "Restart On Death",
+
+  "text.config.xungeontimer.option.placementOffset": "Placement Offset",
+  "text.config.xungeontimer.option.placementOffset.tooltip": "The distance between the timer and the edge of the window."
+}
