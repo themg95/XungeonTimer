@@ -8,13 +8,13 @@
   "contact": {},
   "license": "MIT",
   "icon": "assets/xungeontimer/icon.png",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
-    "client": [
-      "dev.mg95.xungeontimer.XungeonTimerClient"
-    ],
     "main": [
       "dev.mg95.xungeontimer.XungeonTimer"
+    ],
+    "client": [
+      "dev.mg95.xungeontimer.XungeonTimerClient"
     ]
   },
   "mixins": [

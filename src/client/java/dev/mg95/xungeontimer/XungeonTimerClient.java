@@ -1,44 +1,43 @@
 package dev.mg95.xungeontimer;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.time.StopWatch;
-import dev.mg95.xungeontimer.TimerConfig;
 
-import java.util.Objects;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.time.Duration;
+import java.util.List;
+import java.util.LinkedHashMap;
 
 public class XungeonTimerClient implements ClientModInitializer {
-    private StopWatch timer = new StopWatch();
-    private String username;
-    private boolean inXungeon = false;
-    private boolean wasDead = false;
+    public StopWatch timer = new StopWatch();
+    public boolean inXungeon = false;
+    public boolean wasDead = false;
+    public Duration igt = Duration.ZERO;
+    public LinkedHashMap<String, Duration> splits = new LinkedHashMap<>();
 
-
-    public static final TimerConfig CONFIG = TimerConfig.createAndLoad();
+    public static final dev.mg95.xungeontimer.TimerConfig CONFIG = dev.mg95.xungeontimer.TimerConfig.createAndLoad();
 
     @Override
     public void onInitializeClient() {
-        HudRenderCallback.EVENT.register(new CustomHudOverlay(timer));
+        loadSplits();
+        networking();
+
+        HudRenderCallback.EVENT.register(new CustomHudOverlay(this));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             resetTimer();
-        });
-
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (message.getString().endsWith("has been Imprisoned!")) {
-                username = Objects.requireNonNullElse(MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(MinecraftClient.getInstance().player.getUuid()).getDisplayName(), MinecraftClient.getInstance().player.getDisplayName()).getString();
-                if (!Objects.equals(message.getString(), String.format("%s has been Imprisoned!", username))) return;
-                startTimer();
-            } else if (Objects.equals(message.getString(), String.format("%s has escaped the Prison!", username))) {
-                stopTimer();
-            }
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -74,6 +73,9 @@ public class XungeonTimerClient implements ClientModInitializer {
 
     public void resetTimer() {
         inXungeon = false;
+        igt = Duration.ZERO;
+        splits.clear();
+        loadSplits();
         timer.reset();
     }
 
@@ -85,5 +87,57 @@ public class XungeonTimerClient implements ClientModInitializer {
 
     public void stopTimer() {
         timer.suspend();
+    }
+
+    public Duration getIGT() {
+        return igt;
+    }
+
+    public LinkedHashMap<String, Duration> getSplits() {
+        return splits;
+    }
+
+    public void networking() {
+        PayloadTypeRegistry.playS2C().register(StartPayload.ID, StartPayload.CODEC);
+
+        ClientPlayNetworking.registerGlobalReceiver(StartPayload.ID, (payload, context) -> {
+            context.client().execute(this::startTimer);
+        });
+
+        PayloadTypeRegistry.playS2C().register(EndPayload.ID, EndPayload.CODEC);
+
+        ClientPlayNetworking.registerGlobalReceiver(EndPayload.ID, (payload, context) -> {
+            context.client().execute(() -> {
+                stopTimer();
+                igt = Duration.ofMillis(payload.time());
+            });
+        });
+
+        PayloadTypeRegistry.playS2C().register(SplitPayload.ID, SplitPayload.CODEC);
+
+        ClientPlayNetworking.registerGlobalReceiver(SplitPayload.ID, (payload, context) -> {
+            context.client().execute(() -> {
+                var time = Duration.ofMillis(payload.time());
+                var name = payload.name();
+                igt = time;
+                splits.put(name, time);
+            });
+        });
+    }
+
+    public void loadSplits() {
+        Gson gson = new Gson();
+        try (Reader reader = new InputStreamReader(
+                XungeonTimerClient.class.getResourceAsStream("/assets/xungeontimer/splits.json"))) {
+
+            List<String> splitNames = gson.fromJson(reader, new TypeToken<List<String>>() {
+            }.getType());
+            for (String split : splitNames) {
+                splits.put(split, Duration.ZERO);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

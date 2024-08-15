@@ -1,4 +1,5 @@
- # Xungeon Timer 1.1
-- Added config screen
-- Added the restart on death option
-- Added the timer position option
+ # Xungeon Timer 2.0
+- Rewrote a big portion of the mod
+- Added splits
+- Added IGT
+- General improvements
