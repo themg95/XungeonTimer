@@ -89,6 +89,15 @@ public class XungeonTimer implements ModInitializer {
                 )
         );
 
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("xungeon")
+                        .requires(source -> source.hasPermissionLevel(2))
+                        .then(literal("clear").executes(context -> {
+                            timers.clear();
+                            return 1;
+                        }))
+                )
+        );
+
 
     }
 }
