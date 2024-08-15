@@ -25,7 +25,6 @@ public class XungeonTimer implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(SplitPayload.ID, SplitPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(EndPayload.ID, EndPayload.CODEC);
 
-        System.out.println("Initializing XungeonTimer");
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             timers.remove(handler.player.getUuid());
         });

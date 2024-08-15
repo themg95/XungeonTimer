@@ -98,13 +98,9 @@ public class XungeonTimerClient implements ClientModInitializer {
     }
 
     public void networking() {
-        PayloadTypeRegistry.playS2C().register(StartPayload.ID, StartPayload.CODEC);
-
         ClientPlayNetworking.registerGlobalReceiver(StartPayload.ID, (payload, context) -> {
             context.client().execute(this::startTimer);
         });
-
-        PayloadTypeRegistry.playS2C().register(EndPayload.ID, EndPayload.CODEC);
 
         ClientPlayNetworking.registerGlobalReceiver(EndPayload.ID, (payload, context) -> {
             context.client().execute(() -> {
@@ -112,8 +108,6 @@ public class XungeonTimerClient implements ClientModInitializer {
                 igt = Duration.ofMillis(payload.time());
             });
         });
-
-        PayloadTypeRegistry.playS2C().register(SplitPayload.ID, SplitPayload.CODEC);
 
         ClientPlayNetworking.registerGlobalReceiver(SplitPayload.ID, (payload, context) -> {
             context.client().execute(() -> {
