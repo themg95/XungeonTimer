@@ -10,5 +10,7 @@
   "text.config.xungeontimer.option.resetOnDeath": "Restart On Death",
 
   "text.config.xungeontimer.option.placementOffset": "Placement Offset",
-  "text.config.xungeontimer.option.placementOffset.tooltip": "The distance between the timer and the edge of the window."
+  "text.config.xungeontimer.option.placementOffset.tooltip": "The distance between the timer and the edge of the window.",
+
+  "text.config.xungeontimer.option.splits": "Splits"
 }

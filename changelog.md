@@ -1,5 +1,4 @@
- # Xungeon Timer 2.0
-- Rewrote a big portion of the mod
-- Added splits
-- Added IGT
-- General improvements
+ # Xungeon Timer 2.1
+- Rewrote a big (but not as big as 2.0's) part of the mod, again.
+- Fixed reset on death
+- Made the server and client even more interconnected
